@@ -114,3 +114,48 @@ The accessing tool (Claude Code, Telegram bot, OpenClaw, etc.) is a separate con
 - **Federation** — where each accessing tool connects to its own aggregator that federates from a shared pool of namespaces
 
 This dimension is orthogonal to the context/cluster hierarchy and would ideally be layered on top rather than shoehorned into the namespace model.
+
+## Deployment Topology
+
+### Current State: Split Aggregators
+
+In practice, the current deployment uses **two MetaMCP instances**:
+
+1. **Localhost (desktop/workstation)** — for MCP servers that need local file access (e.g., TranscriptionMCP that requires a binary file path)
+2. **Ubuntu VM (local server)** — for everything else
+
+This split exists not by design choice but by necessity: some MCP servers don't have a clean way to pass in binary files or local resources over the network. If the server expects a local file path, it has to run where the file lives.
+
+### Ideal State: Single Networked Aggregator
+
+The preferred architecture would consolidate **all MCP servers onto a single networked resource** (local server or cloud), accessible from any client via Tailscale or Cloudflare Access:
+
+```
+┌──────────────┐   ┌──────────────┐   ┌──────────────┐
+│ Claude Code  │   │ Telegram Bot │   │ OpenClaw     │
+│ (desktop)    │   │ (cloud)      │   │ (remote)     │
+└──────┬───────┘   └──────┬───────┘   └──────┬───────┘
+       │                  │                   │
+       └──────────┬───────┴───────────────────┘
+                  │ Tailscale / Cloudflare Access
+                  ▼
+       ┌──────────────────────┐
+       │ MetaMCP Aggregator   │
+       │ (networked server)   │
+       │                      │
+       │  ┌────┐ ┌────┐ ┌──┐ │
+       │  │ S1 │ │ S2 │ │S3│ │
+       │  └────┘ └────┘ └──┘ │
+       └──────────────────────┘
+```
+
+This gives every client — local or remote — the same set of tools through a single aggregation point.
+
+### Blocker: Local File Access
+
+The main obstacle to full consolidation is MCP servers that require **local file system access** on the client machine. Until there's a standardized way for MCP servers to handle file transfer (e.g., streaming binary content over the MCP protocol rather than expecting a local path), some servers will be forced to run co-located with the files they need to process.
+
+Possible mitigations:
+- **Shared network storage** (NFS/SMB) mounted on both client and server
+- **An MCP file-relay server** that uploads files to a staging area accessible to the networked aggregator
+- **Protocol-level file transfer** — the MCP spec could support binary content passing alongside tool calls, removing the local path dependency entirely
