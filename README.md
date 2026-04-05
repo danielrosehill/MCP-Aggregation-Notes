@@ -36,19 +36,7 @@ You can one-click switch which namespace an endpoint uses. Multiple endpoints ca
 
 ### Visual Summary
 
-```
-┌─────────────────────────────────────────────┐
-│ Endpoint (URL)                              │
-│   ↓ exposes one                             │
-│ ┌─────────────────────────────────────────┐ │
-│ │ Namespace                               │ │
-│ │   ↓ groups one or more                  │ │
-│ │ ┌───────────┐ ┌───────────┐ ┌────────┐ │ │
-│ │ │ Server A  │ │ Server B  │ │ Server C│ │ │
-│ │ └───────────┘ └───────────┘ └────────┘ │ │
-│ └─────────────────────────────────────────┘ │
-└─────────────────────────────────────────────┘
-```
+![MetaMCP Current Architecture](graphics/metamcp-current-architecture.png)
 
 ## Design Friction: The 1:1 Endpoint-to-Namespace Constraint
 
@@ -67,18 +55,7 @@ A third dimension, **Accessing Tool** (which client is connecting — Claude Cod
 
 An endpoint should represent a **context** (Personal, Work), and multiple namespaces representing **tool clusters** should be assignable under it:
 
-```
-┌─────────────────────────────────────────────────────────┐
-│ Endpoint: "Personal Tools"                              │
-│                                                         │
-│ ┌──────────────┐ ┌──────────────┐ ┌──────────────┐     │
-│ │ NS: Dev      │ │ NS: Creative │ │ NS: Comms    │     │
-│ │ ┌──┐ ┌──┐   │ │ ┌──┐ ┌──┐   │ │ ┌──┐ ┌──┐   │     │
-│ │ │S1│ │S2│   │ │ │S3│ │S4│   │ │ │S5│ │S6│   │     │
-│ │ └──┘ └──┘   │ │ └──┘ └──┘   │ │ └──┘ └──┘   │     │
-│ └──────────────┘ └──────────────┘ └──────────────┘     │
-└─────────────────────────────────────────────────────────┘
-```
+![Proposed 1:Many Architecture](graphics/proposed-1-to-many-architecture.png)
 
 This would allow you to maintain logical grouping of tool clusters while exposing them all under a single context-based endpoint.
 
@@ -130,24 +107,7 @@ This split exists not by design choice but by necessity: some MCP servers don't 
 
 The preferred architecture would consolidate **all MCP servers onto a single networked resource** (local server or cloud), accessible from any client via Tailscale or Cloudflare Access:
 
-```
-┌──────────────┐   ┌──────────────┐   ┌──────────────┐
-│ Claude Code  │   │ Telegram Bot │   │ OpenClaw     │
-│ (desktop)    │   │ (cloud)      │   │ (remote)     │
-└──────┬───────┘   └──────┬───────┘   └──────┬───────┘
-       │                  │                   │
-       └──────────┬───────┴───────────────────┘
-                  │ Tailscale / Cloudflare Access
-                  ▼
-       ┌──────────────────────┐
-       │ MetaMCP Aggregator   │
-       │ (networked server)   │
-       │                      │
-       │  ┌────┐ ┌────┐ ┌──┐ │
-       │  │ S1 │ │ S2 │ │S3│ │
-       │  └────┘ └────┘ └──┘ │
-       └──────────────────────┘
-```
+![Ideal Single Aggregator](graphics/ideal-single-aggregator.png)
 
 This gives every client — local or remote — the same set of tools through a single aggregation point.
 
@@ -168,33 +128,7 @@ Aggregation tools like MetaMCP typically assume a single flat level of bundling:
 
 Rather than registering every individual server into one MetaMCP instance, local device clusters (e.g., Raspberry Pis, SBCs) get their own grouped MCP server first. That grouped server then connects into the main MetaMCP aggregator on the local VM. The result is a multi-hop chain:
 
-```
-┌──────────────┐
-│ Claude Code  │
-│ (desktop)    │
-└──────┬───────┘
-       │
-       ▼
-┌──────────────────────────────┐
-│ MetaMCP (local VM)           │
-│                              │
-│  ┌────────┐  ┌────────────┐ │
-│  │ Cloud  │  │ LAN        │ │
-│  │ tools  │  │ Resources  │─┼──┐
-│  └────────┘  └────────────┘ │  │
-└──────────────────────────────┘  │
-                                  │ SSH / local network
-                                  ▼
-                     ┌────────────────────────┐
-                     │ Grouped MCP:           │
-                     │ "Local Computers"      │
-                     │                        │
-                     │  ┌─────┐  ┌─────────┐ │
-                     │  │ Pi  │  │ SBC #2  │ │
-                     │  │ MCP │  │ MCP     │ │
-                     │  └─────┘  └─────────┘ │
-                     └────────────────────────┘
-```
+![Multi-Level Aggregation Topology](graphics/mcp-aggregation-topology.png)
 
 A client hitting the top-level MetaMCP discovers LAN resources, which in turn route to the Raspberry Pi's MCP server. The client doesn't need to know about the multi-hop path — it just sees the tools.
 
