@@ -1,0 +1,151 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 400" width="1200" height="400">
+  <defs>
+    <!-- Background gradient -->
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#0a1628"/>
+      <stop offset="50%" style="stop-color:#0d1f3c"/>
+      <stop offset="100%" style="stop-color:#0a1628"/>
+    </linearGradient>
+    <!-- Glow filter for nodes -->
+    <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="3" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+    <!-- Stronger glow for central hub -->
+    <filter id="glowStrong" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="6" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+    <!-- Text glow -->
+    <filter id="textGlow" x="-10%" y="-10%" width="120%" height="120%">
+      <feGaussianBlur stdDeviation="4" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+    <!-- Subtle grid pattern -->
+    <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+      <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#1a3a5c" stroke-width="0.3" opacity="0.4"/>
+    </pattern>
+    <!-- Connection line gradient -->
+    <linearGradient id="lineGrad1" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#0ea5e9; stop-opacity:0.15"/>
+      <stop offset="50%" style="stop-color:#06b6d4; stop-opacity:0.6"/>
+      <stop offset="100%" style="stop-color:#0ea5e9; stop-opacity:0.15"/>
+    </linearGradient>
+    <linearGradient id="lineGradVert" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#0ea5e9; stop-opacity:0.15"/>
+      <stop offset="50%" style="stop-color:#06b6d4; stop-opacity:0.6"/>
+      <stop offset="100%" style="stop-color:#0ea5e9; stop-opacity:0.15"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1200" height="400" fill="url(#bgGrad)"/>
+  <rect width="1200" height="400" fill="url(#grid)"/>
+
+  <!-- Decorative connection lines (background network) -->
+  <!-- Left cluster connections to left hub -->
+  <line x1="60" y1="80" x2="200" y2="160" stroke="#0ea5e9" stroke-width="1" opacity="0.25"/>
+  <line x1="40" y1="180" x2="200" y2="160" stroke="#0ea5e9" stroke-width="1" opacity="0.25"/>
+  <line x1="80" y1="280" x2="200" y2="160" stroke="#0ea5e9" stroke-width="1" opacity="0.2"/>
+  <line x1="120" y1="60" x2="200" y2="160" stroke="#0ea5e9" stroke-width="1" opacity="0.2"/>
+  <line x1="30" y1="340" x2="200" y2="250" stroke="#0ea5e9" stroke-width="1" opacity="0.15"/>
+  <line x1="100" y1="350" x2="200" y2="250" stroke="#0ea5e9" stroke-width="1" opacity="0.2"/>
+  <line x1="140" y1="320" x2="200" y2="250" stroke="#0ea5e9" stroke-width="1" opacity="0.25"/>
+
+  <!-- Left hub to center -->
+  <line x1="200" y1="160" x2="440" y2="195" stroke="#06b6d4" stroke-width="1.5" opacity="0.35"/>
+  <line x1="200" y1="250" x2="440" y2="210" stroke="#06b6d4" stroke-width="1.5" opacity="0.3"/>
+
+  <!-- Right cluster connections to right hub -->
+  <line x1="1140" y1="90" x2="1000" y2="160" stroke="#0ea5e9" stroke-width="1" opacity="0.25"/>
+  <line x1="1160" y1="190" x2="1000" y2="160" stroke="#0ea5e9" stroke-width="1" opacity="0.25"/>
+  <line x1="1120" y1="290" x2="1000" y2="250" stroke="#0ea5e9" stroke-width="1" opacity="0.2"/>
+  <line x1="1170" y1="320" x2="1000" y2="250" stroke="#0ea5e9" stroke-width="1" opacity="0.2"/>
+  <line x1="1100" y1="60" x2="1000" y2="160" stroke="#0ea5e9" stroke-width="1" opacity="0.2"/>
+  <line x1="1080" y1="350" x2="1000" y2="250" stroke="#0ea5e9" stroke-width="1" opacity="0.15"/>
+  <line x1="1150" y1="260" x2="1000" y2="250" stroke="#0ea5e9" stroke-width="1" opacity="0.25"/>
+
+  <!-- Right hub to center -->
+  <line x1="1000" y1="160" x2="760" y2="195" stroke="#06b6d4" stroke-width="1.5" opacity="0.35"/>
+  <line x1="1000" y1="250" x2="760" y2="210" stroke="#06b6d4" stroke-width="1.5" opacity="0.3"/>
+
+  <!-- Top/bottom scattered connections -->
+  <line x1="350" y1="40" x2="500" y2="150" stroke="#0ea5e9" stroke-width="0.8" opacity="0.15"/>
+  <line x1="500" y1="30" x2="550" y2="150" stroke="#0ea5e9" stroke-width="0.8" opacity="0.12"/>
+  <line x1="700" y1="35" x2="650" y2="150" stroke="#0ea5e9" stroke-width="0.8" opacity="0.12"/>
+  <line x1="850" y1="45" x2="700" y2="150" stroke="#0ea5e9" stroke-width="0.8" opacity="0.15"/>
+  <line x1="380" y1="370" x2="500" y2="260" stroke="#0ea5e9" stroke-width="0.8" opacity="0.15"/>
+  <line x1="520" y1="380" x2="560" y2="260" stroke="#0ea5e9" stroke-width="0.8" opacity="0.12"/>
+  <line x1="680" y1="375" x2="650" y2="260" stroke="#0ea5e9" stroke-width="0.8" opacity="0.12"/>
+  <line x1="820" y1="365" x2="700" y2="260" stroke="#0ea5e9" stroke-width="0.8" opacity="0.15"/>
+
+  <!-- Left outer nodes (small MCP servers) -->
+  <circle cx="60" cy="80" r="4" fill="#0ea5e9" opacity="0.5" filter="url(#glow)"/>
+  <circle cx="40" cy="180" r="3.5" fill="#0ea5e9" opacity="0.45" filter="url(#glow)"/>
+  <circle cx="80" cy="280" r="3" fill="#0ea5e9" opacity="0.4" filter="url(#glow)"/>
+  <circle cx="120" cy="60" r="3.5" fill="#0ea5e9" opacity="0.45" filter="url(#glow)"/>
+  <circle cx="30" cy="340" r="3" fill="#0ea5e9" opacity="0.35" filter="url(#glow)"/>
+  <circle cx="100" cy="350" r="4" fill="#0ea5e9" opacity="0.4" filter="url(#glow)"/>
+  <circle cx="140" cy="320" r="3.5" fill="#0ea5e9" opacity="0.45" filter="url(#glow)"/>
+
+  <!-- Left aggregation hubs -->
+  <circle cx="200" cy="160" r="8" fill="none" stroke="#06b6d4" stroke-width="1.5" opacity="0.6" filter="url(#glow)"/>
+  <circle cx="200" cy="160" r="4" fill="#06b6d4" opacity="0.7"/>
+  <circle cx="200" cy="250" r="7" fill="none" stroke="#06b6d4" stroke-width="1.5" opacity="0.5" filter="url(#glow)"/>
+  <circle cx="200" cy="250" r="3.5" fill="#06b6d4" opacity="0.6"/>
+
+  <!-- Right outer nodes -->
+  <circle cx="1140" cy="90" r="4" fill="#0ea5e9" opacity="0.5" filter="url(#glow)"/>
+  <circle cx="1160" cy="190" r="3.5" fill="#0ea5e9" opacity="0.45" filter="url(#glow)"/>
+  <circle cx="1120" cy="290" r="3" fill="#0ea5e9" opacity="0.4" filter="url(#glow)"/>
+  <circle cx="1170" cy="320" r="3.5" fill="#0ea5e9" opacity="0.4" filter="url(#glow)"/>
+  <circle cx="1100" cy="60" r="3.5" fill="#0ea5e9" opacity="0.45" filter="url(#glow)"/>
+  <circle cx="1080" cy="350" r="3" fill="#0ea5e9" opacity="0.35" filter="url(#glow)"/>
+  <circle cx="1150" cy="260" r="4" fill="#0ea5e9" opacity="0.45" filter="url(#glow)"/>
+
+  <!-- Right aggregation hubs -->
+  <circle cx="1000" cy="160" r="8" fill="none" stroke="#06b6d4" stroke-width="1.5" opacity="0.6" filter="url(#glow)"/>
+  <circle cx="1000" cy="160" r="4" fill="#06b6d4" opacity="0.7"/>
+  <circle cx="1000" cy="250" r="7" fill="none" stroke="#06b6d4" stroke-width="1.5" opacity="0.5" filter="url(#glow)"/>
+  <circle cx="1000" cy="250" r="3.5" fill="#06b6d4" opacity="0.6"/>
+
+  <!-- Top/bottom scattered nodes -->
+  <circle cx="350" cy="40" r="2.5" fill="#0ea5e9" opacity="0.3" filter="url(#glow)"/>
+  <circle cx="500" cy="30" r="2" fill="#0ea5e9" opacity="0.25" filter="url(#glow)"/>
+  <circle cx="700" cy="35" r="2" fill="#0ea5e9" opacity="0.25" filter="url(#glow)"/>
+  <circle cx="850" cy="45" r="2.5" fill="#0ea5e9" opacity="0.3" filter="url(#glow)"/>
+  <circle cx="380" cy="370" r="2.5" fill="#0ea5e9" opacity="0.3" filter="url(#glow)"/>
+  <circle cx="520" cy="380" r="2" fill="#0ea5e9" opacity="0.25" filter="url(#glow)"/>
+  <circle cx="680" cy="375" r="2" fill="#0ea5e9" opacity="0.25" filter="url(#glow)"/>
+  <circle cx="820" cy="365" r="2.5" fill="#0ea5e9" opacity="0.3" filter="url(#glow)"/>
+
+  <!-- Central area: subtle hexagonal/architectural accent -->
+  <polygon points="600,130 640,150 640,190 600,210 560,190 560,150" fill="none" stroke="#06b6d4" stroke-width="0.8" opacity="0.15"/>
+  <polygon points="600,120 650,145 650,195 600,220 550,195 550,145" fill="none" stroke="#06b6d4" stroke-width="0.5" opacity="0.1"/>
+
+  <!-- Main title -->
+  <text x="600" y="188" font-family="'Segoe UI', 'Helvetica Neue', Arial, sans-serif" font-size="48" font-weight="700" fill="#e0f2fe" text-anchor="middle" filter="url(#textGlow)" letter-spacing="2">
+    MCP Aggregation Notes
+  </text>
+
+  <!-- Subtitle -->
+  <text x="600" y="230" font-family="'Segoe UI', 'Helvetica Neue', Arial, sans-serif" font-size="16" font-weight="400" fill="#67e8f9" text-anchor="middle" opacity="0.7" letter-spacing="4">
+    DESIGN PATTERNS FOR UNIFIED MCP ENDPOINTS
+  </text>
+
+  <!-- Thin decorative line under subtitle -->
+  <line x1="440" y1="248" x2="760" y2="248" stroke="#06b6d4" stroke-width="0.5" opacity="0.3"/>
+
+  <!-- Border accent -->
+  <rect x="0" y="0" width="1200" height="2" fill="#06b6d4" opacity="0.4"/>
+  <rect x="0" y="398" width="1200" height="2" fill="#06b6d4" opacity="0.4"/>
+</svg>

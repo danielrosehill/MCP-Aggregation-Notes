@@ -1,6 +1,19 @@
+![MCP Aggregation Notes](graphics/banner.png)
+
 # MCP Aggregation Notes
 
-Notes on how MCP aggregation tools organize and expose MCP servers.
+Notes on how MCP aggregation tools organize and expose MCP servers, design friction in current architectures, and what the ideal aggregation model would look like.
+
+---
+
+## Table of Contents
+
+- [MetaMCP Hierarchy](#metamcp-hierarchy)
+- [Design Friction: 1:1 Endpoint-to-Namespace Constraint](#design-friction-the-11-endpoint-to-namespace-constraint)
+- [Deployment Topology](#deployment-topology)
+- [Ecosystem Research](#ecosystem-research)
+
+---
 
 ## MetaMCP Hierarchy
 
@@ -37,6 +50,8 @@ You can one-click switch which namespace an endpoint uses. Multiple endpoints ca
 ### Visual Summary
 
 ![MetaMCP Current Architecture](graphics/metamcp-current-architecture.png)
+
+---
 
 ## Design Friction: The 1:1 Endpoint-to-Namespace Constraint
 
@@ -92,6 +107,8 @@ The accessing tool (Claude Code, Telegram bot, OpenClaw, etc.) is a separate con
 
 This dimension is orthogonal to the context/cluster hierarchy and would ideally be layered on top rather than shoehorned into the namespace model.
 
+---
+
 ## Deployment Topology
 
 ### Current State: Split Aggregators
@@ -140,3 +157,31 @@ A client hitting the top-level MetaMCP discovers LAN resources, which in turn ro
 - **Discoverability** — The tree structure means clients don't need upfront knowledge of every endpoint; they discover capabilities through the aggregation chain
 
 This is effectively a **federation pattern** applied to MCP — not just flat bundling, but hierarchical routing of tool access across network boundaries.
+
+---
+
+## Ecosystem Research
+
+The research below surveys the MCP aggregator/gateway landscape as of Q1 2026 and evaluates how each tool maps to the target architecture described in this repo.
+
+**[Full Research Note: MCP Aggregation, Gateway, and Proxy Tools — State of the Ecosystem (Q1 2026)](research/mcp-aggregator-landscape-q1-2026.md)**
+
+### Key Findings
+
+**No tool fully satisfies all target requirements.** The ecosystem has converged on flat aggregation with RBAC, which addresses enterprise governance but not the multi-dimensional organization model described here.
+
+| Tool | Closest to Target? | Key Strength | Key Gap |
+|------|---|---|---|
+| **MetaMCP** | Hierarchy model matches | Three-level S/N/E hierarchy, tool overrides | 1:1 endpoint-to-namespace, no federation |
+| **IBM ContextForge** | Best overall candidate | Federation via mDNS, virtual servers, broadest transport support | 1:many mapping unverified |
+| **Bifrost** | Client dimension | Virtual keys with per-key tool allow-lists | No hierarchy, no federation |
+| **MCP Mesh** | Conceptual primitives | Virtual MCPs, multi-level RBAC | No federation, sparse docs |
+| **agentgateway** | Governance/compliance | Linux Foundation backing, CEL policy engine, v1.0 maturity | No namespace hierarchy |
+| **Cloudflare Portals** | Zero Trust auth | Managed, per-server Access policies | No self-hosting, no namespaces |
+| **Microsoft Gateway** | Enterprise K8s | RBAC, control/data plane split | Overkill for single-server, no namespaces |
+
+### Recommended Investigation Path
+
+1. **IBM ContextForge** — verify whether virtual servers support 1:many composition under a single endpoint and whether federation enables true nested aggregation
+2. **MetaMCP** — monitor for 1:many endpoint-to-namespace support (maintainers are aware of the limitation)
+3. **Hybrid approach** — MetaMCP for namespace/endpoint management + manual federation by registering one MetaMCP endpoint as a server in another instance (works today, no first-class support)
