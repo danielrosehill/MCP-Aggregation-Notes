@@ -159,3 +159,50 @@ Possible mitigations:
 - **Shared network storage** (NFS/SMB) mounted on both client and server
 - **An MCP file-relay server** that uploads files to a staging area accessible to the networked aggregator
 - **Protocol-level file transfer** — the MCP spec could support binary content passing alongside tool calls, removing the local path dependency entirely
+
+### Multi-Level Aggregation (Nested Bundling)
+
+Aggregation tools like MetaMCP typically assume a single flat level of bundling: servers go into one aggregator, and that's it. In practice, a more useful pattern is **nested aggregation** — aggregators that themselves consume other aggregators, creating a tree of MCP access.
+
+#### Current Approach
+
+Rather than registering every individual server into one MetaMCP instance, local device clusters (e.g., Raspberry Pis, SBCs) get their own grouped MCP server first. That grouped server then connects into the main MetaMCP aggregator on the local VM. The result is a multi-hop chain:
+
+```
+┌──────────────┐
+│ Claude Code  │
+│ (desktop)    │
+└──────┬───────┘
+       │
+       ▼
+┌──────────────────────────────┐
+│ MetaMCP (local VM)           │
+│                              │
+│  ┌────────┐  ┌────────────┐ │
+│  │ Cloud  │  │ LAN        │ │
+│  │ tools  │  │ Resources  │─┼──┐
+│  └────────┘  └────────────┘ │  │
+└──────────────────────────────┘  │
+                                  │ SSH / local network
+                                  ▼
+                     ┌────────────────────────┐
+                     │ Grouped MCP:           │
+                     │ "Local Computers"      │
+                     │                        │
+                     │  ┌─────┐  ┌─────────┐ │
+                     │  │ Pi  │  │ SBC #2  │ │
+                     │  │ MCP │  │ MCP     │ │
+                     │  └─────┘  └─────────┘ │
+                     └────────────────────────┘
+```
+
+A client hitting the top-level MetaMCP discovers LAN resources, which in turn route to the Raspberry Pi's MCP server. The client doesn't need to know about the multi-hop path — it just sees the tools.
+
+#### Why This Matters
+
+- **Locality** — Device-level MCPs run where they need to (on or near the hardware they manage)
+- **Composability** — Each level of aggregation is independently manageable; you can swap out the Pi cluster without touching the top-level config
+- **Scalability** — Adding a new device means adding it to the local cluster MCP, not reconfiguring every aggregator above it
+- **Discoverability** — The tree structure means clients don't need upfront knowledge of every endpoint; they discover capabilities through the aggregation chain
+
+This is effectively a **federation pattern** applied to MCP — not just flat bundling, but hierarchical routing of tool access across network boundaries.
